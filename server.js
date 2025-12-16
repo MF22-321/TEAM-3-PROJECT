@@ -127,13 +127,24 @@ app.get('/password', (req, res) => {
 app.post('/register', (req, res) => {
     const { username, password, role } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
-    db.run('INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
-        [username, hashedPassword, role || 'member'], function(err) {
-        if (err) {
-            return res.render('register', { error: 'Username already exists' });
-        }
-        res.redirect('/login');
-    });
+    const data = readDatabase();
+
+    // Check if username already exists
+    const existingUser = data.users.find(u => u.username === username);
+    if (existingUser) {
+        return res.render('register', { error: 'Username already exists' });
+    }
+
+    const newUser = {
+        id: data.users.length + 1,
+        username: username,
+        password: hashedPassword,
+        role: role || 'member'
+    };
+
+    data.users.push(newUser);
+    writeDatabase(data);
+    res.redirect('/login');
 });
 
 // Inventory API routes
