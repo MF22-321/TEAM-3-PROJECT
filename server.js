@@ -75,6 +75,7 @@ function requireAuth(req, res, next) {
     if (req.session.userId) {
         return next();
     }
+    // Allow browser navigation but redirect to login if not authenticated
     res.redirect('/login');
 }
 
