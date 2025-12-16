@@ -97,19 +97,17 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
-        if (err) {
-            return res.status(500).send('Database error');
-        }
-        if (user && bcrypt.compareSync(password, user.password)) {
-            req.session.userId = user.id;
-            req.session.username = user.username;
-            req.session.role = user.role;
-            res.redirect('/');
-        } else {
-            res.render('login', { error: 'Invalid credentials' });
-        }
-    });
+    const data = readDatabase();
+    const user = data.users.find(u => u.username === username);
+
+    if (user && bcrypt.compareSync(password, user.password)) {
+        req.session.userId = user.id;
+        req.session.username = user.username;
+        req.session.role = user.role;
+        res.redirect('/');
+    } else {
+        res.render('login', { error: 'Invalid credentials' });
+    }
 });
 
 app.get('/logout', (req, res) => {
@@ -139,43 +137,62 @@ app.post('/register', (req, res) => {
 
 // Inventory API routes
 app.get('/api/inventory', requireAuth, (req, res) => {
-    db.all('SELECT * FROM inventory', [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows);
-    });
+    const data = readDatabase();
+    res.json(data.inventory);
 });
 
 app.post('/api/inventory', requireAuth, (req, res) => {
     const { name, description, quantity, price } = req.body;
-    db.run('INSERT INTO inventory (name, description, quantity, price) VALUES (?, ?, ?, ?)',
-        [name, description, quantity, price], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ id: this.lastID });
-    });
+    const data = readDatabase();
+
+    const newItem = {
+        id: data.inventory.length + 1,
+        name: name,
+        description: description || '',
+        quantity: parseInt(quantity),
+        price: parseFloat(price),
+        created_at: new Date().toISOString()
+    };
+
+    data.inventory.push(newItem);
+    writeDatabase(data);
+    res.json({ id: newItem.id });
 });
 
 app.put('/api/inventory/:id', requireAuth, (req, res) => {
     const { name, description, quantity, price } = req.body;
-    db.run('UPDATE inventory SET name = ?, description = ?, quantity = ?, price = ? WHERE id = ?',
-        [name, description, quantity, price, req.params.id], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ changes: this.changes });
-    });
+    const data = readDatabase();
+    const itemId = parseInt(req.params.id);
+
+    const itemIndex = data.inventory.findIndex(item => item.id === itemId);
+    if (itemIndex === -1) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+
+    data.inventory[itemIndex] = {
+        ...data.inventory[itemIndex],
+        name: name,
+        description: description || '',
+        quantity: parseInt(quantity),
+        price: parseFloat(price)
+    };
+
+    writeDatabase(data);
+    res.json({ changes: 1 });
 });
 
 app.delete('/api/inventory/:id', requireAuth, requireAdmin, (req, res) => {
-    db.run('DELETE FROM inventory WHERE id = ?', [req.params.id], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ changes: this.changes });
-    });
+    const data = readDatabase();
+    const itemId = parseInt(req.params.id);
+
+    const itemIndex = data.inventory.findIndex(item => item.id === itemId);
+    if (itemIndex === -1) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+
+    data.inventory.splice(itemIndex, 1);
+    writeDatabase(data);
+    res.json({ changes: 1 });
 });
 
 // Page routes
