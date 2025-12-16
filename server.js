@@ -1,49 +1,60 @@
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Database setup
-const db = new sqlite3.Database('./inventory.db', (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to SQLite database.');
-        initializeDatabase();
-    }
-});
+// Simple JSON file database
+const DB_FILE = './database.json';
 
-// Initialize database tables
+// Initialize database
 function initializeDatabase() {
-    db.serialize(() => {
-        // Users table
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            role TEXT NOT NULL DEFAULT 'member'
-        )`);
+    if (!fs.existsSync(DB_FILE)) {
+        const initialData = {
+            users: [],
+            inventory: []
+        };
 
-        // Inventory table
-        db.run(`CREATE TABLE IF NOT EXISTS inventory (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            description TEXT,
-            quantity INTEGER NOT NULL,
-            price REAL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
-
-        // Insert default admin user
+        // Create default admin user
         const hashedPassword = bcrypt.hashSync('admin123', 10);
-        db.run(`INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)`,
-            ['admin', hashedPassword, 'admin']);
-    });
+        initialData.users.push({
+            id: 1,
+            username: 'admin',
+            password: hashedPassword,
+            role: 'admin'
+        });
+
+        fs.writeFileSync(DB_FILE, JSON.stringify(initialData, null, 2));
+        console.log('Database initialized with default admin user.');
+    } else {
+        console.log('Database file exists.');
+    }
 }
+
+// Database helper functions
+function readDatabase() {
+    try {
+        const data = fs.readFileSync(DB_FILE, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading database:', error);
+        return { users: [], inventory: [] };
+    }
+}
+
+function writeDatabase(data) {
+    try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error('Error writing database:', error);
+    }
+}
+
+// Initialize database on startup
+initializeDatabase();
 
 // Middleware
 app.use(express.json());
