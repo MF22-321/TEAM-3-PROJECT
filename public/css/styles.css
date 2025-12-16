@@ -1,0 +1,163 @@
+/* ==========================================================================
+   1. RESTORE STANDARD LAYOUT (PONDASI UTAMA)
+   Jangan ubah bagian import ini agar struktur tidak rusak.
+   ========================================================================== */
+@import url("https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css");
+@import url("https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin@7.0.7/dist/css/styles.css");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap");
+
+/* ==========================================================================
+   2. PERBAIKAN TATA LETAK (FIXING LAYOUT ISSUES)
+   ========================================================================== */
+
+:root {
+  /* Variabel Warna Konsisten */
+  --main-bg: #f3f4f6; /* Abu-abu muda untuk latar belakang konten */
+  --sidebar-bg: #0f172a; /* Biru-Hitam Pekat untuk Sidebar & Navbar Atas */
+  --sidebar-text: #cbd5e1; /* Teks Sidebar abu-abu terang */
+  --sidebar-hover: #1e293b; /* Warna saat mouse di atas menu */
+  --accent-color: #3b82f6; /* Biru terang untuk aksen */
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background-color: var(--main-bg);
+  font-family: "Inter", sans-serif;
+}
+
+/* --- FIX NAVBAR ATAS (TOPNAV) --- */
+.sb-topnav {
+  background-color: var(
+    --sidebar-bg
+  ) !important; /* Menyamakan warna dengan sidebar */
+  height: 56px; /* Tinggi standar Bootstrap agar tidak memakan tempat */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none; /* Hilangkan bayangan yang membuat kesan "terpisah" */
+  padding-left: 0;
+}
+
+.sb-topnav .navbar-brand {
+  width: 225px; /* Lebar pas sidebar */
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+  background-color: transparent; /* Transparan agar menyatu */
+}
+
+/* --- FIX SIDEBAR (NAVBAR KIRI) --- */
+#layoutSidenav_nav .sb-sidenav {
+  background-color: var(--sidebar-bg) !important; /* Warna solid gelap */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Merapikan Item Menu */
+.sb-sidenav-menu .nav {
+  font-size: 0.9rem;
+}
+
+.sb-sidenav-menu .nav-link {
+  color: var(--sidebar-text) !important;
+  padding: 0.75rem 1.5rem; /* Padding standar yang rapi */
+  margin: 0; /* HAPUS MARGIN yang bikin berantakan */
+  border-radius: 0; /* Hapus sudut bulat agar terlihat profesional dan rapat */
+  border-left: 3px solid transparent; /* Persiapan untuk indikator aktif */
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Efek Hover Rapi */
+.sb-sidenav-menu .nav-link:hover {
+  background-color: var(--sidebar-hover);
+  color: #ffffff !important;
+  border-left: 3px solid var(--accent-color); /* Garis biru di kiri saat hover */
+}
+
+/* Judul Kategori (CORE, INTERFACE) */
+.sb-sidenav-menu-heading {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Footer Sidebar */
+.sb-sidenav-footer {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  color: #94a3b8;
+}
+
+/* --- FIX BAGIAN TENGAH ATAS (KONTEN UTAMA) --- */
+#layoutSidenav_content {
+  padding-top: 0; /* Hapus jarak paksa di atas */
+}
+
+/* Mengatur Judul Halaman (Dashboard) agar tidak terlalu turun */
+.container-fluid {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+h1.mt-4 {
+  margin-top: 0 !important; /* MENGHAPUS JARAK KOSONG DI ATAS JUDUL */
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.75rem;
+}
+
+/* Breadcrumb (jalur halaman) yang lebih tipis */
+.breadcrumb {
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+}
+
+/* --- KARTU (CARD) YANG LEBIH BERSIH --- */
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  background: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background-color: #fff;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  color: var(--sidebar-bg);
+  display: flex;
+  align-items: center;
+}
+
+.card-header i {
+  margin-right: 0.5rem;
+  color: var(--accent-color);
+}
+
+/* Tombol */
+.btn-primary {
+  background-color: var(--accent-color);
+  border: none;
+  padding: 0.5rem 1rem;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+/* Login Fix */
+body.bg-primary {
+  background: linear-gradient(
+    180deg,
+    var(--sidebar-bg) 0%,
+    #1e293b 100%
+  ) !important;
+}
