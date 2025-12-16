@@ -205,7 +205,45 @@ app.get('/inventory-add', requireAuth, (req, res) => {
     res.render('inventoryAdd', { user: req.session.username, role: req.session.role });
 });
 
-// Add more routes as needed...
+app.get('/delivery-order', requireAuth, (req, res) => {
+    res.render('deliveryOrder', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/receiving-order', requireAuth, (req, res) => {
+    res.render('receivingOrder', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/purchase', requireAuth, (req, res) => {
+    res.render('purchase', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/purchase-report', requireAuth, (req, res) => {
+    res.render('purchaseReport', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/transaction', requireAuth, (req, res) => {
+    res.render('transaction', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/delivery-order', requireAuth, (req, res) => {
+    res.render('deliveryOrder', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/receiving-order', requireAuth, (req, res) => {
+    res.render('receivingOrder', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/purchase', requireAuth, (req, res) => {
+    res.render('purchase', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/purchase-report', requireAuth, (req, res) => {
+    res.render('purchaseReport', { user: req.session.username, role: req.session.role });
+});
+
+app.get('/transaction', requireAuth, (req, res) => {
+    res.render('transaction', { user: req.session.username, role: req.session.role });
+});
 
 // app.listen(PORT, '0.0.0.0', () => {
 //     console.log(`Server running on port ${PORT}`);
